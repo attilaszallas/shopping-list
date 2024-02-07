@@ -1,2 +1,2 @@
 # shopping-list
-Shopping List
+Shopping List ASP.NET Core MVC project

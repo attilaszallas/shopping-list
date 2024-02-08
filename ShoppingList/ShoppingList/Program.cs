@@ -5,18 +5,15 @@ using ShoppingList.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var identityConnectionString = builder.Configuration.GetConnectionString("IdentityConnection") ?? throw new InvalidOperationException("Connection string 'IdentityConnection' not found.");
-var shoppingListConnectionString = builder.Configuration.GetConnectionString("ShoppingListConnection") ?? throw new InvalidOperationException("Connection string 'ShoppingListConnection' not found.");
+var connectionString = builder.Configuration.GetConnectionString("DbConnection") ?? throw new InvalidOperationException("Connection string 'IdentityConnection' not found.");
 
-builder.Services.AddDbContext<IdentityDbContext>(options =>
-    options.UseSqlServer(identityConnectionString));
-builder.Services.AddDbContext<ShoppingListDbContext>(options =>
-    options.UseSqlServer(shoppingListConnectionString));
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(connectionString));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<IdentityDbContext>();
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();

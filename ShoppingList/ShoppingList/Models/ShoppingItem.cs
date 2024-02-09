@@ -1,9 +1,14 @@
-﻿namespace ShoppingList.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ShoppingList.Models
 {
     public class ShoppingItem
     {
+        [Key]
+        [Required]
         public int Id { get; set; }
-        public string Name { get; set; }
+        [Required]
+        public required string Name { get; set; }
         public bool IsPurchased { get; set; }
     }
 }

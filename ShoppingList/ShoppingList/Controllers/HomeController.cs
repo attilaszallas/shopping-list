@@ -20,47 +20,26 @@ namespace ShoppingList.Controllers
         // GET: ShoppingItems
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ShoppingItems.ToListAsync());
+            var _shoppingItems = await _context.ShoppingItems.ToListAsync();
+
+            var _viewModel = new ShoppingItemViewModel();
+            _viewModel.ShoppingItems = _shoppingItems;
+
+
+            return View(_viewModel);
         }
 
-        // GET: ShoppingItems/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var shoppingItem = await _context.ShoppingItems
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (shoppingItem == null)
-            {
-                return NotFound();
-            }
-
-            return View(shoppingItem);
-        }
-
-        // GET: ShoppingItems/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: ShoppingItems/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,IsPurchased")] ShoppingItem shoppingItem)
+        public async Task<IActionResult> Index(ShoppingItemViewModel shoppingItem)
         {
-            if (ModelState.IsValid)
+            if (shoppingItem is not null)
             {
-                _context.Add(shoppingItem);
+                _context.Add(shoppingItem.NewShoppingItem);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(shoppingItem);
+
+            return BadRequest();
         }
 
         // GET: ShoppingItems/Edit/5
@@ -114,28 +93,9 @@ namespace ShoppingList.Controllers
             return View(shoppingItem);
         }
 
-        // GET: ShoppingItems/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var shoppingItem = await _context.ShoppingItems
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (shoppingItem == null)
-            {
-                return NotFound();
-            }
-
-            return View(shoppingItem);
-        }
-
-        // POST: ShoppingItems/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        [HttpGet]
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
         {
             var shoppingItem = await _context.ShoppingItems.FindAsync(id);
             if (shoppingItem != null)

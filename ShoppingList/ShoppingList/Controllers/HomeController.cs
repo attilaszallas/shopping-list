@@ -93,14 +93,25 @@ namespace ShoppingList.Controllers
             return View(shoppingItem);
         }
 
-        [HttpGet]
-        [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
             var shoppingItem = await _context.ShoppingItems.FindAsync(id);
             if (shoppingItem != null)
             {
                 _context.ShoppingItems.Remove(shoppingItem);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SwitchIsPurchased(int id)
+        {
+            var shoppingItem = await _context.ShoppingItems.FindAsync(id);
+            if (shoppingItem != null)
+            {
+                shoppingItem.IsPurchased = !shoppingItem.IsPurchased;
             }
 
             await _context.SaveChangesAsync();

@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h4>Add new shoppingItem</h4>
+<h4>Add shopping item</h4>
 
 <div class="background">
     <div class="container">
@@ -22,10 +22,10 @@
     <thead>
         <tr>
             <th>
-                "Name"
+                Name
             </th>
             <th>
-                IsPurchased
+                Purchased already?
             </th>
             <th></th>
         </tr>
@@ -37,7 +37,9 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IsPurchased)
+                <form id="isPurchasedForm" method="post" asp-controller="Home" asp-action="SwitchIsPurchased" asp-route-id="@item.Id">
+                    <input type="checkbox" checked="@item.IsPurchased" onchange="$('#isPurchasedForm').delay(1000).then(submit());" />
+                </form>
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>

@@ -1,7 +1,7 @@
 ﻿@model ShoppingList.Models.ShoppingItem
 
 @{
-    ViewData["Title"] = "ShoppingItemListElement";
+    ViewData["Title"] = "_ShoppingItemListElement";
 }
 
 @{
@@ -35,7 +35,7 @@
         </form>
         <td>
             <form id="isInTheShoppingCartForm" method="post" asp-controller="Home" asp-action="SwitchIsPurchased" asp-route-id="@Model.Id">
-                <input type="checkbox" checked="@Model.IsInTheShoppingCart" onchange="$('#isInTheShoppingCartForm').delay(1000).then(submit());" />
+            <input type="checkbox" checked="@Model.IsInTheShoppingCart" onchange="$('#isInTheShoppingCartForm').delay(1000).then(submit());" style="width: 16px; min-height: 16px;" />
             </form>
         </td>
         <td>

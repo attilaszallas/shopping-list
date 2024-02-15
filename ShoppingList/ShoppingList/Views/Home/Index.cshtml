@@ -35,7 +35,7 @@
     <tbody>
         @foreach (var item in Model.ShoppingItems)
         {
-            @await Html.PartialAsync("ShoppingItemListElement", item)
+            @await Html.PartialAsync("_ShoppingItemListElement", item)
         }
     </tbody>
 </table>

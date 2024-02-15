@@ -9,6 +9,6 @@ namespace ShoppingList.Models
         public int Id { get; set; }
         [Required]
         public required string Name { get; set; }
-        public bool IsPurchased { get; set; }
+        public bool IsInTheShoppingCart { get; set; }
     }
 }

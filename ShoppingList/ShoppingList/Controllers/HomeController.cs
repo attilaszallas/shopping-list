@@ -63,7 +63,7 @@ namespace ShoppingList.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,IsPurchased")] ShoppingItem shoppingItem)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,IsInTheShoppingCart")] ShoppingItem shoppingItem)
         {
             if (id != shoppingItem.Id)
             {
@@ -88,11 +88,13 @@ namespace ShoppingList.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
             return View(shoppingItem);
         }
 
+        [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
             var shoppingItem = await _context.ShoppingItems.FindAsync(id);
@@ -111,7 +113,7 @@ namespace ShoppingList.Controllers
             var shoppingItem = await _context.ShoppingItems.FindAsync(id);
             if (shoppingItem != null)
             {
-                shoppingItem.IsPurchased = !shoppingItem.IsPurchased;
+                shoppingItem.IsInTheShoppingCart = !shoppingItem.IsInTheShoppingCart;
             }
 
             await _context.SaveChangesAsync();

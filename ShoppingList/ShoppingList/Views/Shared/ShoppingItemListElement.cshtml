@@ -1,0 +1,46 @@
+﻿@model ShoppingList.Models.ShoppingItem
+
+@{
+    ViewData["Title"] = "ShoppingItemListElement";
+}
+
+@{
+    string EditId = Model.Id + "Edit";
+    string SaveId = Model.Id + "Save";
+    string StaticId = Model.Id + "Static";
+    string EmptyId = Model.Id + "Empty";
+}
+
+    <tr >
+        <form asp-action="Edit" asp-route-id="@Model.Id">
+            <td id="@EditId" style="display:none">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="@Model.Id" />
+                <input asp-for="@Model.Name" class="form-control" />
+                <span asp-validation-for="@Model.Name" class="text-danger"></span>
+            </td>
+            <td id="@SaveId" style="display:none">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </td>
+        </form>
+
+        <form id="switchIsInEditModeForm" method="post" asp-controller="Home" asp-action="ShoppingItemListElement" asp-route-id="@Model.Id">
+            <td id="@StaticId">
+                <input type="button" class="btn btn-light" value="@Html.DisplayFor(modelItem => Model.Name)"
+               onclick="document.getElementById('@EditId').style.display='block'; document.getElementById('@SaveId').style.display='block';
+                    document.getElementById('@StaticId').style.display='none'; document.getElementById('@EmptyId').style.display='none';" />
+            </td>
+            <td id="@EmptyId">
+            </td>
+        </form>
+        <td>
+            <form id="isInTheShoppingCartForm" method="post" asp-controller="Home" asp-action="SwitchIsPurchased" asp-route-id="@Model.Id">
+                <input type="checkbox" checked="@Model.IsInTheShoppingCart" onchange="$('#isInTheShoppingCartForm').delay(1000).then(submit());" />
+            </form>
+        </td>
+        <td>
+            <form id="deleteButton" method="post" asp-controller="Home" asp-action="Delete" asp-route-id="@Model.Id">
+                <input type="button" class="btn btn-danger" value="X" onclick="$('#deleteButton').delay(1000).then(submit());" />
+            </form>
+        </td>
+    </tr>

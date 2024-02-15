@@ -10,7 +10,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-10">
-                @Html.Partial("_InputForm")
+                @await Html.PartialAsync("_InputForm")
             </div>
         </div>
     </div>
@@ -25,27 +25,17 @@
                 Name
             </th>
             <th>
-                Purchased already?
+            </th>
+            <th>
+                Is in the shopping cart?
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.ShoppingItems) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                <form id="isPurchasedForm" method="post" asp-controller="Home" asp-action="SwitchIsPurchased" asp-route-id="@item.Id">
-                    <input type="checkbox" checked="@item.IsPurchased" onchange="$('#isPurchasedForm').delay(1000).then(submit());" />
-                </form>
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+        @foreach (var item in Model.ShoppingItems)
+        {
+            @await Html.PartialAsync("ShoppingItemListElement", item)
         }
     </tbody>
 </table>

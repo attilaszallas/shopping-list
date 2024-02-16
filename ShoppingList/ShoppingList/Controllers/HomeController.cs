@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShoppingList.Data;
@@ -6,6 +7,7 @@ using System.Diagnostics;
 
 namespace ShoppingList.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -17,7 +19,7 @@ namespace ShoppingList.Controllers
             _context = context;
         }
 
-        // GET: ShoppingItems
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var _shoppingItems = await _context.ShoppingItems.ToListAsync();

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShoppingList.Data;
@@ -5,6 +6,7 @@ using ShoppingList.Models;
 
 namespace ShoppingList.Controllers.Api
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class HomeApiController : ControllerBase

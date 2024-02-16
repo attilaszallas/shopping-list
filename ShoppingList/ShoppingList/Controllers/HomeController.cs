@@ -108,6 +108,14 @@ namespace ShoppingList.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> EmptyList()
+        {
+            _context.ShoppingItems.RemoveRange(_context.ShoppingItems);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
         public async Task<IActionResult> SwitchIsPurchased(int id)
         {
             var shoppingItem = await _context.ShoppingItems.FindAsync(id);

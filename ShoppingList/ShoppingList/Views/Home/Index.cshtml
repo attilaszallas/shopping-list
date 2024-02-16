@@ -16,6 +16,12 @@
     </div>
 </div>
 
+<div class="text-center">
+    <form id="deleteAllButton" method="post" asp-controller="Home" asp-action="EmptyList">
+        <input type="button" class="btn btn-danger" value="Empty List" onclick="$('#deleteAllButton').submit();" />
+    </form>
+</div>
+
 <hr/>
 
 <table class="table">

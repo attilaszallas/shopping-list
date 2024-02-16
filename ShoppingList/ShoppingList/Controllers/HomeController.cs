@@ -30,6 +30,7 @@ namespace ShoppingList.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(ShoppingItemViewModel shoppingItem)
         {
             if (shoppingItem is not null)
@@ -95,6 +96,7 @@ namespace ShoppingList.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             var shoppingItem = await _context.ShoppingItems.FindAsync(id);
@@ -108,6 +110,7 @@ namespace ShoppingList.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EmptyList()
         {
             _context.ShoppingItems.RemoveRange(_context.ShoppingItems);
@@ -116,6 +119,7 @@ namespace ShoppingList.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> SwitchIsPurchased(int id)
         {
             var shoppingItem = await _context.ShoppingItems.FindAsync(id);

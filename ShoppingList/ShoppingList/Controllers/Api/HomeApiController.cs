@@ -18,7 +18,6 @@ namespace ShoppingList.Controllers.Api
 
         [HttpGet]
         [Route("/api/shoppingItems")]
-        // [ValidateAntiForgeryToken]
         public async Task<IActionResult> GetShoppingItemsAsync()
         {
             return new JsonResult(await _context.ShoppingItems.ToListAsync());
@@ -44,7 +43,7 @@ namespace ShoppingList.Controllers.Api
 
         [HttpPost]
         [Route("/api/shoppingItem/{id}")]
-        // [ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,IsPurchased")] ShoppingItem shoppingItem)
         {
             if (ModelState.IsValid)
@@ -59,7 +58,7 @@ namespace ShoppingList.Controllers.Api
 
         [HttpPut]
         [Route("/api/shoppingItem/{id}")]
-        // [ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,IsPurchased")] ShoppingItem shoppingItem)
         {
             if (id != shoppingItem.Id)
@@ -93,7 +92,7 @@ namespace ShoppingList.Controllers.Api
 
         [HttpDelete, ActionName("Delete")]
         [Route("/api/shoppingItem/{id}")]
-        // [ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             var shoppingItem = await _context.ShoppingItems.FindAsync(id);

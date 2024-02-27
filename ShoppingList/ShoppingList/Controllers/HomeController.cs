@@ -13,6 +13,10 @@ namespace ShoppingList.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
 
+        private IQueryable<ShoppingItem> ShoppingItemsFilteredByUser => _context.ShoppingItems.Where(user => user.UserEmail == LoggedUserName);
+
+        private string LoggedUserName => GetLoggedUserName();
+
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
         {
             _logger = logger;
@@ -22,22 +26,35 @@ namespace ShoppingList.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var _shoppingItems = await _context.ShoppingItems.ToListAsync();
+            var _shoppingItems = await ShoppingItemsFilteredByUser.ToListAsync();
 
             var _viewModel = new ShoppingItemViewModel();
             _viewModel.ShoppingItems = _shoppingItems;
-
 
             return View(_viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Index(ShoppingItemViewModel shoppingItem)
+        public async Task<IActionResult> Index(ShoppingItemViewModel shoppingItemViewModel)
         {
-            if (shoppingItem is not null)
+            if (shoppingItemViewModel is not null)
             {
-                _context.Add(shoppingItem.NewShoppingItem);
+                var shoppingItem = shoppingItemViewModel.NewShoppingItem;
+
+                if (shoppingItem is null)
+                {
+                    return BadRequest();
+                }
+
+                if (shoppingItem.Name is null or "")
+                {
+                    return BadRequest("Shopping item name is null or empty.");
+                }
+
+                shoppingItem.UserEmail = LoggedUserName;
+
+                _context.Add(shoppingItem);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -53,12 +70,13 @@ namespace ShoppingList.Controllers
                 return NotFound();
             }
 
-            var shoppingItem = await _context.ShoppingItems.FindAsync(id);
+            var shoppingItem = await ShoppingItemsFilteredByUser.FirstAsync(user => user.Id == id);
             if (shoppingItem == null)
             {
                 return NotFound();
             }
-            return View(shoppingItem);
+
+            return RedirectToAction(nameof(Index));
         }
 
         // POST: ShoppingItems/Edit/5
@@ -72,6 +90,8 @@ namespace ShoppingList.Controllers
             {
                 return NotFound();
             }
+
+            shoppingItem.UserEmail = LoggedUserName;
 
             if (ModelState.IsValid)
             {
@@ -94,14 +114,15 @@ namespace ShoppingList.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
-            return View(shoppingItem);
+
+            return BadRequest();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            var shoppingItem = await _context.ShoppingItems.FindAsync(id);
+            var shoppingItem = await ShoppingItemsFilteredByUser.FirstAsync(user => user.Id == id);
             if (shoppingItem != null)
             {
                 _context.ShoppingItems.Remove(shoppingItem);
@@ -115,7 +136,7 @@ namespace ShoppingList.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EmptyList()
         {
-            _context.ShoppingItems.RemoveRange(_context.ShoppingItems);
+            _context.ShoppingItems.RemoveRange(ShoppingItemsFilteredByUser);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -124,7 +145,7 @@ namespace ShoppingList.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SwitchIsPurchased(int id)
         {
-            var shoppingItem = await _context.ShoppingItems.FindAsync(id);
+            var shoppingItem = await ShoppingItemsFilteredByUser.FirstAsync(user => user.Id == id);
             if (shoppingItem != null)
             {
                 shoppingItem.IsInTheShoppingCart = !shoppingItem.IsInTheShoppingCart;
@@ -137,6 +158,18 @@ namespace ShoppingList.Controllers
         private bool ShoppingItemExists(int id)
         {
             return _context.ShoppingItems.Any(e => e.Id == id);
+        }
+
+        private string GetLoggedUserName()
+        {
+            var identityName = HttpContext.User?.Identity?.Name;
+
+            if (identityName is null or "")
+            {
+                throw new InvalidOperationException("User cannot identified.");
+            }
+
+            return identityName;
         }
 
         public IActionResult Privacy()

@@ -11,10 +11,16 @@ namespace ShoppingList.Controllers.Api
     [Route("api/[controller]")]
     public class HomeApiController : ControllerBase
     {
+        private readonly ILogger<HomeApiController> _logger;
         private readonly ApplicationDbContext _context;
 
-        public HomeApiController(ApplicationDbContext context)
+        private IQueryable<ShoppingItem> ShoppingItemsFilteredByUser => _context.ShoppingItems.Where(user => user.UserEmail == LoggedUserName);
+
+        private string LoggedUserName => GetLoggedUserName();
+
+        public HomeApiController(ILogger<HomeApiController> logger, ApplicationDbContext context)
         {
+            _logger = logger;
             _context = context;
         }
 
@@ -22,7 +28,7 @@ namespace ShoppingList.Controllers.Api
         [Route("/api/shoppingItems")]
         public async Task<IActionResult> GetShoppingItemsAsync()
         {
-            return new JsonResult(await _context.ShoppingItems.ToListAsync());
+            return new JsonResult(await ShoppingItemsFilteredByUser.ToListAsync());
         }
 
         [HttpGet]
@@ -34,7 +40,7 @@ namespace ShoppingList.Controllers.Api
                 return BadRequest();
             }
 
-            var shoppingItem = await _context.ShoppingItems.FirstOrDefaultAsync(m => m.Id == id);
+            var shoppingItem = await ShoppingItemsFilteredByUser.FirstOrDefaultAsync(m => m.Id == id);
             if (shoppingItem == null)
             {
                 return NotFound();
@@ -97,7 +103,7 @@ namespace ShoppingList.Controllers.Api
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            var shoppingItem = await _context.ShoppingItems.FindAsync(id);
+            var shoppingItem = await ShoppingItemsFilteredByUser.FirstAsync(user => user.Id == id);
             if (shoppingItem != null)
             {
                 _context.ShoppingItems.Remove(shoppingItem);
@@ -111,7 +117,19 @@ namespace ShoppingList.Controllers.Api
 
         private bool ShoppingItemExists(int id)
         {
-            return _context.ShoppingItems.Any(e => e.Id == id);
+            return ShoppingItemsFilteredByUser.Any(e => e.Id == id);
+        }
+
+        private string GetLoggedUserName()
+        {
+            var identityName = HttpContext.User?.Identity?.Name;
+
+            if (identityName is null or "")
+            {
+                throw new InvalidOperationException("User cannot identified.");
+            }
+
+            return identityName;
         }
     }
 }

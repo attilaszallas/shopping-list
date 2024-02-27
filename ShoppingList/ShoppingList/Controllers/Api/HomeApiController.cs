@@ -52,9 +52,9 @@ namespace ShoppingList.Controllers.Api
         [HttpPost]
         [Route("/api/shoppingItem/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,IsPurchased")] ShoppingItem shoppingItem)
+        public async Task<IActionResult> Create([Bind("Id,Name,IsInTheShoppingCart")] ShoppingItem shoppingItem)
         {
-            if (ModelState.IsValid)
+            if (shoppingItem is not null)
             {
                 _context.Add(shoppingItem);
                 await _context.SaveChangesAsync();
@@ -67,14 +67,14 @@ namespace ShoppingList.Controllers.Api
         [HttpPut]
         [Route("/api/shoppingItem/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,IsPurchased")] ShoppingItem shoppingItem)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,IsInTheShoppingCart")] ShoppingItem shoppingItem)
         {
             if (id != shoppingItem.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (shoppingItem is not null)
             {
                 try
                 {

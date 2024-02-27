@@ -7,6 +7,7 @@ namespace ShoppingList.Models
         [Key]
         [Required]
         public int Id { get; set; }
+        public string? UserEmail { get; set; }
         [Required]
         public required string Name { get; set; }
         public bool IsInTheShoppingCart { get; set; }

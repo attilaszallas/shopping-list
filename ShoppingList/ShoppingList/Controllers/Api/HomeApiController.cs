@@ -6,7 +6,6 @@ using ShoppingList.Models;
 
 namespace ShoppingList.Controllers.Api
 {
-    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class HomeApiController : ControllerBase
@@ -49,6 +48,7 @@ namespace ShoppingList.Controllers.Api
             return new JsonResult(shoppingItem);
         }
 
+        [Authorize]
         [HttpPost]
         [Route("/api/shoppingItem/{id}")]
         [ValidateAntiForgeryToken]
@@ -64,6 +64,7 @@ namespace ShoppingList.Controllers.Api
             return BadRequest();
         }
 
+        [Authorize]
         [HttpPut]
         [Route("/api/shoppingItem/{id}")]
         [ValidateAntiForgeryToken]
@@ -98,6 +99,7 @@ namespace ShoppingList.Controllers.Api
             return BadRequest();
         }
 
+        [Authorize]
         [HttpDelete, ActionName("Delete")]
         [Route("/api/shoppingItem/{id}")]
         [ValidateAntiForgeryToken]

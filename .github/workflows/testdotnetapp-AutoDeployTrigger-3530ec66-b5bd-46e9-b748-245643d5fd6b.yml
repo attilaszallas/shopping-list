@@ -1,0 +1,47 @@
+name: Trigger auto deployment for testdotnetapp
+
+# When this action will be executed
+on:
+  # Automatically trigger it when detected changes in repo
+  push:
+    branches: 
+      [ main ]
+    paths:
+    - '**'
+    - '.github/workflows/testdotnetapp-AutoDeployTrigger-3530ec66-b5bd-46e9-b748-245643d5fd6b.yml'
+
+  # Allow manual trigger 
+  workflow_dispatch:      
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions: 
+      id-token: write #This is required for requesting the OIDC JWT Token
+      contents: read #Required when GH token is used to authenticate with private repo
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.TESTDOTNETAPP_AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.TESTDOTNETAPP_AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.TESTDOTNETAPP_AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build and push container image to registry
+        uses: azure/container-apps-deploy-action@v2
+        with:
+          appSourcePath: ${{ github.workspace }} 
+          registryUrl: 
+          registryUsername: ${{ secrets.TESTDOTNETAPP_REGISTRY_USERNAME }}
+          registryPassword: ${{ secrets.TESTDOTNETAPP_REGISTRY_PASSWORD }}
+          containerAppName: testdotnetapp
+          resourceGroup: Container_Apps
+          imageToBuild: default/[parameters('containerAppName')]:${{ github.sha }}
+          _buildArgumentsKey_: |
+            _buildArgumentsValues_
+
+
